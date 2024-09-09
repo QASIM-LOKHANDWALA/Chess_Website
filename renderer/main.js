@@ -9,6 +9,8 @@ import {
   containsOpponentPiece,
   bishopNextMoves,
   checkPossibleMoves,
+  knightNextMove,
+  checkPossibleKnightMoves,
 } from "../helper/utils.js";
 import {
   captureHighlight,
@@ -50,6 +52,29 @@ function BlackPawnEvents(square) {
       capturablePieces.push(element);
     }
   });
+
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackBishopEvents(square) {
+  const { topRightIds, topLeftIds, bottomRightIds, bottomLeftIds } =
+    bishopNextMoves(square.id);
+  let result = [];
+  result.push(checkPossibleMoves(topRightIds));
+  result.push(checkPossibleMoves(topLeftIds));
+  result.push(checkPossibleMoves(bottomRightIds));
+  result.push(checkPossibleMoves(bottomLeftIds));
+
+  const nextMoves = result.flat();
+  nextMoves.forEach((el) => {
+    let element = getSquareById(el);
+    if (containsOpponentPiece(element, "WHITE")) {
+      capturablePieces.push(element);
+    }
+  });
+  console.log(nextMoves);
 
   highlightNextMoves(nextMoves);
   captureHighlight(capturablePieces);
@@ -112,25 +137,32 @@ function whiteBishopEvents(square) {
   previousSelfHighlighted = square;
 }
 
-function blackBishopEvents(square) {
-  const { topRightIds, topLeftIds, bottomRightIds, bottomLeftIds } =
-    bishopNextMoves(square.id);
-  let result = [];
-  result.push(checkPossibleMoves(topRightIds));
-  result.push(checkPossibleMoves(topLeftIds));
-  result.push(checkPossibleMoves(bottomRightIds));
-  result.push(checkPossibleMoves(bottomLeftIds));
-
-  const nextMoves = result.flat();
-  nextMoves.forEach((el) => {
-    let element = getSquareById(el);
-    if (containsOpponentPiece(element, "WHITE")) {
-      capturablePieces.push(element);
+function whiteKnightEvents(square) {
+  const possibleMoves = knightNextMove(square.id);
+  const availabelMoves = checkPossibleKnightMoves(possibleMoves);
+  availabelMoves.forEach((element) => {
+    if (containsOpponentPiece(getSquareById(element), "BLACK")) {
+      capturablePieces.push(getSquareById(element));
     }
   });
-  console.log(nextMoves);
+  console.log("availabelMoves", availabelMoves);
 
-  highlightNextMoves(nextMoves);
+  highlightNextMoves(availabelMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackKnightEvents(square) {
+  const possibleMoves = knightNextMove(square.id);
+  const availabelMoves = checkPossibleKnightMoves(possibleMoves);
+  availabelMoves.forEach((element) => {
+    if (containsOpponentPiece(getSquareById(element), "WHITE")) {
+      capturablePieces.push(getSquareById(element));
+    }
+  });
+  console.log("availabelMoves", availabelMoves);
+
+  highlightNextMoves(availabelMoves);
   captureHighlight(capturablePieces);
   previousSelfHighlighted = square;
 }
@@ -144,7 +176,7 @@ function setGlobalListner() {
       clearHighlights(GlobalState);
       const parentId = parentDiv.id;
       const square = getSquareById(parentId);
-      console.log(square);
+      // console.log(square);
 
       if (previousSelfHighlighted === square) {
         return;
@@ -167,6 +199,10 @@ function setGlobalListner() {
         whiteBishopEvents(square);
       } else if (square.piece.piece_name.includes("BLACK_BISHOP")) {
         blackBishopEvents(square);
+      } else if (square.piece.piece_name.includes("WHITE_KNIGHT")) {
+        whiteKnightEvents(square);
+      } else if (square.piece.piece_name.includes("BLACK_KNIGHT")) {
+        blackKnightEvents(square);
       }
     } else if (target.localName === "span") {
       clearHighlights(GlobalState);
