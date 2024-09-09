@@ -1,0 +1,65 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 62.5%;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+body {
+  height: 100vh;
+  width: 100vw;
+  background-color: #21222c;
+}
+#chess-board {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+
+  border: 7px solid #6b1e1b;
+}
+.row {
+  display: flex;
+}
+.square {
+  width: 7rem;
+  height: 7rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.black {
+  background-color: #ca6e3b;
+}
+.white {
+  background-color: #edd5b2;
+}
+.piece {
+  width: 100%;
+}
+.label {
+  font-size: 0.8rem;
+  padding: 2px;
+  font-weight: bold;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  z-index: 2;
+}
+.highlight {
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background-color: rgba(51, 51, 51, 0.6);
+}
+.self-highlight {
+  background-color: rgba(255, 255, 0, 0.822);
+}
+.capture-highlight {
+  background-color: rgba(255, 0, 0, 0.745);
+}
