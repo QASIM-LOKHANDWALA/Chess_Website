@@ -7,6 +7,8 @@ import {
   whitePawnCaptureId,
   blackPawnCaptureId,
   containsOpponentPiece,
+  bishopNextMoves,
+  checkPossibleMoves,
 } from "../helper/utils.js";
 import {
   captureHighlight,
@@ -88,6 +90,51 @@ function WhitePawnEvents(square) {
   previousSelfHighlighted = square;
 }
 
+function whiteBishopEvents(square) {
+  const { topRightIds, topLeftIds, bottomRightIds, bottomLeftIds } =
+    bishopNextMoves(square.id);
+  let result = [];
+  result.push(checkPossibleMoves(topRightIds));
+  result.push(checkPossibleMoves(topLeftIds));
+  result.push(checkPossibleMoves(bottomRightIds));
+  result.push(checkPossibleMoves(bottomLeftIds));
+
+  const nextMoves = result.flat();
+  nextMoves.forEach((el) => {
+    let element = getSquareById(el);
+    if (containsOpponentPiece(element, "BLACK")) {
+      capturablePieces.push(element);
+    }
+  });
+
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackBishopEvents(square) {
+  const { topRightIds, topLeftIds, bottomRightIds, bottomLeftIds } =
+    bishopNextMoves(square.id);
+  let result = [];
+  result.push(checkPossibleMoves(topRightIds));
+  result.push(checkPossibleMoves(topLeftIds));
+  result.push(checkPossibleMoves(bottomRightIds));
+  result.push(checkPossibleMoves(bottomLeftIds));
+
+  const nextMoves = result.flat();
+  nextMoves.forEach((el) => {
+    let element = getSquareById(el);
+    if (containsOpponentPiece(element, "WHITE")) {
+      capturablePieces.push(element);
+    }
+  });
+  console.log(nextMoves);
+
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
 function setGlobalListner() {
   chessBoard.addEventListener("click", (e) => {
     const target = e.target;
@@ -116,6 +163,10 @@ function setGlobalListner() {
         BlackPawnEvents(square);
       } else if (square.piece.piece_name.includes("WHITE_PAWN")) {
         WhitePawnEvents(square);
+      } else if (square.piece.piece_name.includes("WHITE_BISHOP")) {
+        whiteBishopEvents(square);
+      } else if (square.piece.piece_name.includes("BLACK_BISHOP")) {
+        blackBishopEvents(square);
       }
     } else if (target.localName === "span") {
       clearHighlights(GlobalState);
