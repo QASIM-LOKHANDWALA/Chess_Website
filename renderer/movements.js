@@ -11,7 +11,7 @@ function moveElement(start, end) {
 }
 
 function capturePiece(start, end) {
-  // console.log("capturePiece", start, end);
+  console.log("capturePiece", start, end);
   let removal = document.querySelector(`#${start.id} img`);
   removal.remove();
   removal = document.querySelector(`#${end.id} img`);

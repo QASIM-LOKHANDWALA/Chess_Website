@@ -71,7 +71,7 @@ function blackPawnCaptureId(id) {
 }
 
 function bishopNextMoves(squareId) {
-  function topRightIds(sqId) {
+  function topLeftIds(sqId) {
     let array = [];
     let id = sqId;
 
@@ -85,7 +85,7 @@ function bishopNextMoves(squareId) {
     return array;
   }
 
-  function topLeftIds(sqId) {
+  function topRightIds(sqId) {
     let array = [];
     let id = sqId;
 
@@ -221,6 +221,22 @@ function rookNextMove(squareId) {
   };
 }
 
+function queenNextMoves(squareId) {
+  const straightMoves = rookNextMove(squareId);
+  const diagonalMoves = bishopNextMoves(squareId);
+
+  return {
+    top: checkPossibleMoves(straightMoves.top),
+    bottom: checkPossibleMoves(straightMoves.bottom),
+    left: checkPossibleMoves(straightMoves.left),
+    right: checkPossibleMoves(straightMoves.right),
+    topLeft: checkPossibleMoves(diagonalMoves.topLeftIds),
+    topRight: checkPossibleMoves(diagonalMoves.topRightIds),
+    bottomLeft: checkPossibleMoves(diagonalMoves.bottomLeftIds),
+    bottomRight: checkPossibleMoves(diagonalMoves.bottomRightIds),
+  };
+}
+
 function checkPossibleKnightMoves(array) {
   const result = [];
   for (let index = 0; index < array.length; index++) {
@@ -267,6 +283,7 @@ export {
   bishopNextMoves,
   knightNextMove,
   rookNextMove,
+  queenNextMoves,
   containsOpponentPiece,
   checkPossibleMoves,
   checkPossibleKnightMoves,

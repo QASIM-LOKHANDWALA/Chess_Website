@@ -12,6 +12,7 @@ import {
   knightNextMove,
   checkPossibleKnightMoves,
   rookNextMove,
+  queenNextMoves,
 } from "../helper/utils.js";
 import {
   captureHighlight,
@@ -25,6 +26,7 @@ const chessBoard = chessBoardDiv;
 let previousSelfHighlighted = null;
 let capturablePieces = [];
 
+// FUNCTIONS TRIGGERED WHEN A BLACK PIECE IS CLICKED
 function BlackPawnEvents(square) {
   const squareId = square.id;
   let nextMoves = [];
@@ -82,6 +84,81 @@ function blackBishopEvents(square) {
   previousSelfHighlighted = square;
 }
 
+function blackKnightEvents(square) {
+  const possibleMoves = knightNextMove(square.id);
+  const availabelMoves = checkPossibleKnightMoves(possibleMoves);
+  availabelMoves.forEach((element) => {
+    if (containsOpponentPiece(getSquareById(element), "WHITE")) {
+      capturablePieces.push(getSquareById(element));
+    }
+  });
+  console.log("availabelMoves", availabelMoves);
+
+  highlightNextMoves(availabelMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackRookEvents(square) {
+  const { top, bottom, left, right } = rookNextMove(square.id);
+  console.log("rook", rookNextMove(square.id));
+
+  const availabelMoves = [];
+  availabelMoves.push(checkPossibleMoves(top));
+  availabelMoves.push(checkPossibleMoves(bottom));
+  availabelMoves.push(checkPossibleMoves(right));
+  availabelMoves.push(checkPossibleMoves(left));
+
+  console.log(availabelMoves);
+
+  const nextMoves = availabelMoves.flat();
+  nextMoves.forEach((element) => {
+    let el = getSquareById(element);
+    if (containsOpponentPiece(el, "WHITE")) {
+      capturablePieces.push(el);
+    }
+  });
+
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackQueenEvents(square) {
+  const {
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  } = queenNextMoves(square.id);
+  const moves = [
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  ];
+  const flatMoves = moves.flat();
+  flatMoves.forEach((element) => {
+    let el = getSquareById(element);
+    if (containsOpponentPiece(el, "WHITE")) {
+      capturablePieces.push(el);
+    }
+  });
+
+  highlightNextMoves(flatMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+// FUNCTIONS TRIGGERED WHEN A WHITE PIECE IS CLICKED
 function WhitePawnEvents(square) {
   const squareId = square.id;
   let nextMoves = [];
@@ -153,21 +230,6 @@ function whiteKnightEvents(square) {
   previousSelfHighlighted = square;
 }
 
-function blackKnightEvents(square) {
-  const possibleMoves = knightNextMove(square.id);
-  const availabelMoves = checkPossibleKnightMoves(possibleMoves);
-  availabelMoves.forEach((element) => {
-    if (containsOpponentPiece(getSquareById(element), "WHITE")) {
-      capturablePieces.push(getSquareById(element));
-    }
-  });
-  console.log("availabelMoves", availabelMoves);
-
-  highlightNextMoves(availabelMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
-}
-
 function whiteRookEvents(square) {
   const { top, bottom, left, right } = rookNextMove(square.id);
   console.log("rook", rookNextMove(square.id));
@@ -193,27 +255,36 @@ function whiteRookEvents(square) {
   previousSelfHighlighted = square;
 }
 
-function blackRookEvents(square) {
-  const { top, bottom, left, right } = rookNextMove(square.id);
-  console.log("rook", rookNextMove(square.id));
-
-  const availabelMoves = [];
-  availabelMoves.push(checkPossibleMoves(top));
-  availabelMoves.push(checkPossibleMoves(bottom));
-  availabelMoves.push(checkPossibleMoves(right));
-  availabelMoves.push(checkPossibleMoves(left));
-
-  console.log(availabelMoves);
-
-  const nextMoves = availabelMoves.flat();
-  nextMoves.forEach((element) => {
+function whiteQueenEvents(square) {
+  const {
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  } = queenNextMoves(square.id);
+  const moves = [
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  ];
+  const flatMoves = moves.flat();
+  flatMoves.forEach((element) => {
     let el = getSquareById(element);
-    if (containsOpponentPiece(el, "WHITE")) {
+    if (containsOpponentPiece(el, "BLACK")) {
       capturablePieces.push(el);
     }
   });
 
-  highlightNextMoves(nextMoves);
+  highlightNextMoves(flatMoves);
   captureHighlight(capturablePieces);
   previousSelfHighlighted = square;
 }
@@ -227,10 +298,11 @@ function setGlobalListner() {
       clearHighlights(GlobalState);
       const parentId = parentDiv.id;
       const square = getSquareById(parentId);
-      // console.log(square);
+      console.log("piece Clicked", square);
 
       if (previousSelfHighlighted === square) {
         previousSelfHighlighted = null;
+        capturablePieces = [];
         return;
       }
 
@@ -243,23 +315,7 @@ function setGlobalListner() {
 
       selfHighlight(square);
 
-      if (square.piece.piece_name.includes("BLACK_PAWN")) {
-        BlackPawnEvents(square);
-      } else if (square.piece.piece_name.includes("WHITE_PAWN")) {
-        WhitePawnEvents(square);
-      } else if (square.piece.piece_name.includes("WHITE_BISHOP")) {
-        whiteBishopEvents(square);
-      } else if (square.piece.piece_name.includes("BLACK_BISHOP")) {
-        blackBishopEvents(square);
-      } else if (square.piece.piece_name.includes("WHITE_KNIGHT")) {
-        whiteKnightEvents(square);
-      } else if (square.piece.piece_name.includes("BLACK_KNIGHT")) {
-        blackKnightEvents(square);
-      } else if (square.piece.piece_name.includes("WHITE_ROOK")) {
-        whiteRookEvents(square);
-      } else if (square.piece.piece_name.includes("BLACK_ROOK")) {
-        blackRookEvents(square);
-      }
+      checkSelected(square);
     } else if (target.localName === "span") {
       clearHighlights(GlobalState);
       const parentId = parentDiv.id;
@@ -273,6 +329,30 @@ function setGlobalListner() {
       clearHighlights(GlobalState);
     }
   });
+}
+
+function checkSelected(square) {
+  if (square.piece.piece_name.includes("BLACK_PAWN")) {
+    BlackPawnEvents(square);
+  } else if (square.piece.piece_name.includes("WHITE_PAWN")) {
+    WhitePawnEvents(square);
+  } else if (square.piece.piece_name.includes("WHITE_BISHOP")) {
+    whiteBishopEvents(square);
+  } else if (square.piece.piece_name.includes("BLACK_BISHOP")) {
+    blackBishopEvents(square);
+  } else if (square.piece.piece_name.includes("WHITE_KNIGHT")) {
+    whiteKnightEvents(square);
+  } else if (square.piece.piece_name.includes("BLACK_KNIGHT")) {
+    blackKnightEvents(square);
+  } else if (square.piece.piece_name.includes("WHITE_ROOK")) {
+    whiteRookEvents(square);
+  } else if (square.piece.piece_name.includes("BLACK_ROOK")) {
+    blackRookEvents(square);
+  } else if (square.piece.piece_name.includes("WHITE_QUEEN")) {
+    whiteQueenEvents(square);
+  } else if (square.piece.piece_name.includes("BLACK_QUEEN")) {
+    blackQueenEvents(square);
+  }
 }
 
 export { setGlobalListner };

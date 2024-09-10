@@ -54,7 +54,7 @@ function renderPieces(data) {
 }
 
 function highlightNextMoves(array) {
-  console.log("check", array);
+  // console.log("check", array);
 
   array.forEach((element) => {
     getSquareById(element).highlighted = true;
