@@ -11,6 +11,7 @@ import {
   checkPossibleMoves,
   knightNextMove,
   checkPossibleKnightMoves,
+  rookNextMove,
 } from "../helper/utils.js";
 import {
   captureHighlight,
@@ -167,6 +168,56 @@ function blackKnightEvents(square) {
   previousSelfHighlighted = square;
 }
 
+function whiteRookEvents(square) {
+  const { top, bottom, left, right } = rookNextMove(square.id);
+  console.log("rook", rookNextMove(square.id));
+
+  const availabelMoves = [];
+  availabelMoves.push(checkPossibleMoves(top));
+  availabelMoves.push(checkPossibleMoves(bottom));
+  availabelMoves.push(checkPossibleMoves(right));
+  availabelMoves.push(checkPossibleMoves(left));
+
+  console.log(availabelMoves);
+
+  const nextMoves = availabelMoves.flat();
+  nextMoves.forEach((element) => {
+    let el = getSquareById(element);
+    if (containsOpponentPiece(el, "BLACK")) {
+      capturablePieces.push(el);
+    }
+  });
+
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackRookEvents(square) {
+  const { top, bottom, left, right } = rookNextMove(square.id);
+  console.log("rook", rookNextMove(square.id));
+
+  const availabelMoves = [];
+  availabelMoves.push(checkPossibleMoves(top));
+  availabelMoves.push(checkPossibleMoves(bottom));
+  availabelMoves.push(checkPossibleMoves(right));
+  availabelMoves.push(checkPossibleMoves(left));
+
+  console.log(availabelMoves);
+
+  const nextMoves = availabelMoves.flat();
+  nextMoves.forEach((element) => {
+    let el = getSquareById(element);
+    if (containsOpponentPiece(el, "WHITE")) {
+      capturablePieces.push(el);
+    }
+  });
+
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
 function setGlobalListner() {
   chessBoard.addEventListener("click", (e) => {
     const target = e.target;
@@ -179,6 +230,7 @@ function setGlobalListner() {
       // console.log(square);
 
       if (previousSelfHighlighted === square) {
+        previousSelfHighlighted = null;
         return;
       }
 
@@ -203,6 +255,10 @@ function setGlobalListner() {
         whiteKnightEvents(square);
       } else if (square.piece.piece_name.includes("BLACK_KNIGHT")) {
         blackKnightEvents(square);
+      } else if (square.piece.piece_name.includes("WHITE_ROOK")) {
+        whiteRookEvents(square);
+      } else if (square.piece.piece_name.includes("BLACK_ROOK")) {
+        blackRookEvents(square);
       }
     } else if (target.localName === "span") {
       clearHighlights(GlobalState);

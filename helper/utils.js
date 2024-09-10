@@ -171,6 +171,56 @@ function knightNextMove(squareId) {
   return result;
 }
 
+function rookNextMove(squareId) {
+  function top(squareId) {
+    let col = squareId[0];
+    let row = Number(squareId[1]);
+    const array = [];
+    while (row != 8) {
+      row = row + 1;
+      array.push(`${col}${row}`);
+    }
+    return array;
+  }
+  function bottom(squareId) {
+    let col = squareId[0];
+    let row = Number(squareId[1]);
+    const array = [];
+    while (row != 1) {
+      row = row - 1;
+      array.push(`${col}${row}`);
+    }
+    return array;
+  }
+  function right(squareId) {
+    let col = squareId[0];
+    let row = Number(squareId[1]);
+    const array = [];
+    while (col != "h") {
+      col = String.fromCharCode(col.charCodeAt(0) + 1);
+      array.push(`${col}${row}`);
+    }
+    return array;
+  }
+  function left(squareId) {
+    let col = squareId[0];
+    let row = Number(squareId[1]);
+    const array = [];
+    while (col != "a") {
+      col = String.fromCharCode(col.charCodeAt(0) - 1);
+      array.push(`${col}${row}`);
+    }
+    return array;
+  }
+
+  return {
+    top: top(squareId),
+    bottom: bottom(squareId),
+    right: right(squareId),
+    left: left(squareId),
+  };
+}
+
 function checkPossibleKnightMoves(array) {
   const result = [];
   for (let index = 0; index < array.length; index++) {
@@ -216,6 +266,7 @@ export {
   blackPawnCaptureId,
   bishopNextMoves,
   knightNextMove,
+  rookNextMove,
   containsOpponentPiece,
   checkPossibleMoves,
   checkPossibleKnightMoves,
