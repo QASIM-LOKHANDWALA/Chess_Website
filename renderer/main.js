@@ -1,5 +1,5 @@
 import { GlobalState } from "../data/general.js";
-import { moveElement, capturePiece } from "./movements.js";
+// import { moveElement, capturePiece } from "./movements.js";
 import {
   chessBoardDiv,
   getSquareById,
@@ -23,6 +23,11 @@ import {
 } from "./interfaceRender.js";
 
 const chessBoard = chessBoardDiv;
+
+let current_player = "WHITE";
+function togglePlayer() {
+  current_player = current_player === "WHITE" ? "BLACK" : "WHITE";
+}
 
 let previousSelfHighlighted = null;
 let capturablePieces = [];
@@ -402,30 +407,61 @@ function setGlobalListner() {
 
 function checkSelected(square) {
   if (square.piece.piece_name.includes("BLACK_PAWN")) {
-    BlackPawnEvents(square);
+    if (current_player === "BLACK") BlackPawnEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_PAWN")) {
-    WhitePawnEvents(square);
+    if (current_player === "WHITE") WhitePawnEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_BISHOP")) {
-    whiteBishopEvents(square);
+    if (current_player === "WHITE") whiteBishopEvents(square);
   } else if (square.piece.piece_name.includes("BLACK_BISHOP")) {
-    blackBishopEvents(square);
+    if (current_player === "BLACK") blackBishopEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_KNIGHT")) {
-    whiteKnightEvents(square);
+    if (current_player === "WHITE") whiteKnightEvents(square);
   } else if (square.piece.piece_name.includes("BLACK_KNIGHT")) {
-    blackKnightEvents(square);
+    if (current_player === "BLACK") blackKnightEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_ROOK")) {
-    whiteRookEvents(square);
+    if (current_player === "WHITE") whiteRookEvents(square);
   } else if (square.piece.piece_name.includes("BLACK_ROOK")) {
-    blackRookEvents(square);
+    if (current_player === "BLACK") blackRookEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_QUEEN")) {
-    whiteQueenEvents(square);
+    if (current_player === "WHITE") whiteQueenEvents(square);
   } else if (square.piece.piece_name.includes("BLACK_QUEEN")) {
-    blackQueenEvents(square);
+    if (current_player === "BLACK") blackQueenEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_KING")) {
-    whiteKingEvents(square);
+    if (current_player === "WHITE") whiteKingEvents(square);
   } else if (square.piece.piece_name.includes("BLACK_KING")) {
-    blackKingEvents(square);
+    if (current_player === "BLACK") blackKingEvents(square);
   }
+}
+
+function moveElement(start, end) {
+  togglePlayer();
+  start.piece.current_position = end.id;
+  end.piece = start.piece;
+  start.piece = null;
+  document.querySelector("#" + start.id + " img").remove();
+  const destination = document.getElementById(end.id);
+  const image = document.createElement("img");
+  image.src = end.piece.img;
+  image.classList.add("piece");
+  destination.appendChild(image);
+}
+
+function capturePiece(start, end) {
+  togglePlayer();
+  console.log("capturePiece", start, end);
+  let removal = document.querySelector(`#${start.id} img`);
+  removal.remove();
+  removal = document.querySelector(`#${end.id} img`);
+  removal.remove();
+  end.piece = start.piece;
+  end.piece.current_position = end.id;
+
+  start.piece = null;
+
+  const image = document.createElement("img");
+  image.classList.add("piece");
+  image.src = end.piece.img;
+  document.getElementById(end.id).appendChild(image);
 }
 
 export { setGlobalListner };
