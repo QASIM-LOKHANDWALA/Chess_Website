@@ -13,6 +13,7 @@ import {
   checkPossibleKnightMoves,
   rookNextMove,
   queenNextMoves,
+  kingNextMoves,
 } from "../helper/utils.js";
 import {
   captureHighlight,
@@ -135,6 +136,40 @@ function blackQueenEvents(square) {
     bottomLeft,
     bottomRight,
   } = queenNextMoves(square.id);
+  const moves = [
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  ];
+  const flatMoves = moves.flat();
+  flatMoves.forEach((element) => {
+    let el = getSquareById(element);
+    if (containsOpponentPiece(el, "WHITE")) {
+      capturablePieces.push(el);
+    }
+  });
+
+  highlightNextMoves(flatMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+function blackKingEvents(square) {
+  const {
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  } = kingNextMoves(square.id);
   const moves = [
     top,
     bottom,
@@ -289,6 +324,40 @@ function whiteQueenEvents(square) {
   previousSelfHighlighted = square;
 }
 
+function whiteKingEvents(square) {
+  const {
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  } = kingNextMoves(square.id);
+  const moves = [
+    top,
+    bottom,
+    left,
+    right,
+    topLeft,
+    topRight,
+    bottomLeft,
+    bottomRight,
+  ];
+  const flatMoves = moves.flat();
+  flatMoves.forEach((element) => {
+    let el = getSquareById(element);
+    if (containsOpponentPiece(el, "BLACK")) {
+      capturablePieces.push(el);
+    }
+  });
+
+  highlightNextMoves(flatMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
 function setGlobalListner() {
   chessBoard.addEventListener("click", (e) => {
     const target = e.target;
@@ -352,6 +421,10 @@ function checkSelected(square) {
     whiteQueenEvents(square);
   } else if (square.piece.piece_name.includes("BLACK_QUEEN")) {
     blackQueenEvents(square);
+  } else if (square.piece.piece_name.includes("WHITE_KING")) {
+    whiteKingEvents(square);
+  } else if (square.piece.piece_name.includes("BLACK_KING")) {
+    blackKingEvents(square);
   }
 }
 

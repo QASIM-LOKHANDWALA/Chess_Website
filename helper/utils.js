@@ -237,6 +237,46 @@ function queenNextMoves(squareId) {
   };
 }
 
+function kingNextMoves(squareId) {
+  const straightMoves = rookNextMove(squareId);
+  const diagonalMoves = bishopNextMoves(squareId);
+
+  return {
+    top: checkPossibleMoves(
+      straightMoves.top.length != 0 ? new Array(straightMoves.top[0]) : []
+    ),
+    bottom: checkPossibleMoves(
+      straightMoves.bottom.length != 0 ? new Array(straightMoves.bottom[0]) : []
+    ),
+    left: checkPossibleMoves(
+      straightMoves.left.length != 0 ? new Array(straightMoves.left[0]) : []
+    ),
+    right: checkPossibleMoves(
+      straightMoves.right.length != 0 ? new Array(straightMoves.right[0]) : []
+    ),
+    topLeft: checkPossibleMoves(
+      diagonalMoves.topLeftIds.length != 0
+        ? new Array(diagonalMoves.topLeftIds[0])
+        : []
+    ),
+    topRight: checkPossibleMoves(
+      diagonalMoves.topRightIds.length != 0
+        ? new Array(diagonalMoves.topRightIds[0])
+        : []
+    ),
+    bottomLeft: checkPossibleMoves(
+      diagonalMoves.bottomLeftIds.length != 0
+        ? new Array(diagonalMoves.bottomLeftIds[0])
+        : []
+    ),
+    bottomRight: checkPossibleMoves(
+      diagonalMoves.bottomRightIds.length != 0
+        ? new Array(diagonalMoves.bottomRightIds[0])
+        : []
+    ),
+  };
+}
+
 function checkPossibleKnightMoves(array) {
   const result = [];
   for (let index = 0; index < array.length; index++) {
@@ -284,6 +324,7 @@ export {
   knightNextMove,
   rookNextMove,
   queenNextMoves,
+  kingNextMoves,
   containsOpponentPiece,
   checkPossibleMoves,
   checkPossibleKnightMoves,
