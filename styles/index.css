@@ -1,65 +1,260 @@
+:root {
+  --color-primary: #1a1a2e;
+  --color-secondary: #16213e;
+  --color-accent: #0f3460;
+  --color-text: #e94560;
+  --color-light: #f1f1f1;
+  --color-dark: #0d1b2a;
+  --color-board-light: #f0d9b5;
+  --color-board-dark: #b58863;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-html {
-  font-size: 62.5%;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-}
+
 body {
-  height: 100vh;
-  width: 100vw;
-  background-color: #21222c;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--color-light);
+  background-color: var(--color-primary);
 }
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background-color: #888;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #f1f1f1;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Header Styles */
+header {
+  background-color: var(--color-secondary);
+  padding: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 40px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+}
+
+.nav-links li {
+  margin-left: 20px;
+}
+
+.link {
+  color: var(--color-light);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: var(--color-text);
+}
+
+/* Main Content Styles */
+main {
+  padding: 2rem 0;
+}
+
+.game-area {
+  margin-top: 3%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
 #chess-board {
-  margin: auto;
+  justify-self: end;
   display: flex;
   flex-direction: column;
   width: fit-content;
-
   border: 7px solid #6b1e1b;
 }
+
+.game-info {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.turn-indicator {
+  background-color: var(--color-secondary);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#turn-display {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.move-history {
+  background-color: var(--color-secondary);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+#previous-moves {
+  list-style: none;
+  padding: 0;
+}
+
+#previous-moves li {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--color-accent);
+}
+
+.game-controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-text);
+  color: var(--color-light);
+}
+
+.btn-primary:hover {
+  background-color: #d63851;
+}
+
 .row {
   display: flex;
 }
 .square {
-  width: 7rem;
-  height: 7rem;
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
 }
-.black {
-  background-color: #ca6e3b;
-}
-.white {
-  background-color: #edd5b2;
-}
-.piece {
-  width: 100%;
-}
+
 .label {
   font-size: 0.8rem;
   padding: 2px;
   font-weight: bold;
-
+  color: transparent;
   position: absolute;
   bottom: 0;
   left: 0;
 
   z-index: 2;
 }
+
+.white {
+  background-color: var(--color-board-light);
+}
+
+.black {
+  background-color: var(--color-board-dark);
+}
+
+.piece {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s ease;
+}
+
+.piece:hover {
+  transform: scale(1.1);
+}
+
 .highlight {
   width: 40%;
   height: 40%;
   border-radius: 50%;
   background-color: rgba(51, 51, 51, 0.6);
 }
+
 .self-highlight {
-  background-color: rgba(255, 255, 0, 0.822);
+  box-shadow: inset 0 0 0 5px rgba(255, 255, 0, 0.5);
 }
+
 .capture-highlight {
-  background-color: rgba(255, 0, 0, 0.745);
+  box-shadow: inset 0 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Footer Styles */
+footer {
+  background-color: var(--color-secondary);
+  color: var(--color-light);
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #chess-board {
+    margin-bottom: 2rem;
+  }
+
+  .game-info {
+    width: 100%;
+  }
 }

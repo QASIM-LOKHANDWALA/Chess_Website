@@ -68,14 +68,17 @@ function clearHighlights(data) {
     row.forEach((element) => {
       if (element.highlighted) {
         element.highlighted = false;
+        console.dir(document.getElementById(element.id));
         document.querySelector("#" + element.id + " .highlight").remove();
       }
       if (element.selfHighlighted) {
         element.selfHighlighted = false;
+        console.dir(document.getElementById(element.id));
         document.getElementById(element.id).classList.remove("self-highlight");
       }
       if (element.captureHighlighted) {
         element.captureHighlighted = false;
+        console.dir(document.getElementById(element.id));
         document
           .getElementById(element.id)
           .classList.remove("capture-highlight");
@@ -98,10 +101,18 @@ function captureHighlight(array) {
   });
 }
 
+function previousMovesRender(from, to) {
+  const ul = document.getElementById("previous-moves");
+  const list_item = document.createElement("li");
+  list_item.innerText = from.id + " --> " + to.id;
+  ul.insertBefore(list_item, ul.firstChild);
+}
+
 export {
   initGame,
   highlightNextMoves,
   clearHighlights,
   selfHighlight,
   captureHighlight,
+  previousMovesRender,
 };

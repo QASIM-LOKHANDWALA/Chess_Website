@@ -1,5 +1,11 @@
 import { GlobalState } from "../data/general.js";
 // import { moveElement, capturePiece } from "./movements.js";
+// import {
+//   isKingInCheck,
+//   isCheckmate,
+//   wouldMoveResultInCheck,
+//   checkGameState,
+// } from "../helper/checkAndCheckmate.js";
 import {
   chessBoardDiv,
   getSquareById,
@@ -19,14 +25,19 @@ import {
   captureHighlight,
   clearHighlights,
   highlightNextMoves,
+  previousMovesRender,
   selfHighlight,
 } from "./interfaceRender.js";
+
+const turnSpan = document.querySelector(".turn-span");
 
 const chessBoard = chessBoardDiv;
 
 let current_player = "WHITE";
 function togglePlayer() {
-  current_player = current_player === "WHITE" ? "BLACK" : "WHITE";
+  const color = current_player === "WHITE" ? "BLACK" : "WHITE";
+  current_player = color;
+  turnSpan.innerHTML = color;
 }
 
 let previousSelfHighlighted = null;
@@ -62,9 +73,7 @@ function BlackPawnEvents(square) {
     }
   });
 
-  highlightNextMoves(nextMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(nextMoves, capturablePieces, square);
 }
 
 function blackBishopEvents(square) {
@@ -85,9 +94,7 @@ function blackBishopEvents(square) {
   });
   console.log(nextMoves);
 
-  highlightNextMoves(nextMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(nextMoves, capturablePieces, square);
 }
 
 function blackKnightEvents(square) {
@@ -100,9 +107,7 @@ function blackKnightEvents(square) {
   });
   console.log("availabelMoves", availabelMoves);
 
-  highlightNextMoves(availabelMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(availabelMoves, capturablePieces, square);
 }
 
 function blackRookEvents(square) {
@@ -125,9 +130,7 @@ function blackRookEvents(square) {
     }
   });
 
-  highlightNextMoves(nextMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(nextMoves, capturablePieces, square);
 }
 
 function blackQueenEvents(square) {
@@ -159,9 +162,7 @@ function blackQueenEvents(square) {
     }
   });
 
-  highlightNextMoves(flatMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(flatMoves, capturablePieces, square);
 }
 
 function blackKingEvents(square) {
@@ -193,9 +194,7 @@ function blackKingEvents(square) {
     }
   });
 
-  highlightNextMoves(flatMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(flatMoves, capturablePieces, square);
 }
 
 // FUNCTIONS TRIGGERED WHEN A WHITE PIECE IS CLICKED
@@ -228,9 +227,7 @@ function WhitePawnEvents(square) {
     }
   });
 
-  highlightNextMoves(nextMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(nextMoves, capturablePieces, square);
 }
 
 function whiteBishopEvents(square) {
@@ -250,9 +247,7 @@ function whiteBishopEvents(square) {
     }
   });
 
-  highlightNextMoves(nextMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(nextMoves, capturablePieces, square);
 }
 
 function whiteKnightEvents(square) {
@@ -265,9 +260,7 @@ function whiteKnightEvents(square) {
   });
   console.log("availabelMoves", availabelMoves);
 
-  highlightNextMoves(availabelMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(availabelMoves, capturablePieces, square);
 }
 
 function whiteRookEvents(square) {
@@ -290,9 +283,7 @@ function whiteRookEvents(square) {
     }
   });
 
-  highlightNextMoves(nextMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(nextMoves, capturablePieces, square);
 }
 
 function whiteQueenEvents(square) {
@@ -324,9 +315,7 @@ function whiteQueenEvents(square) {
     }
   });
 
-  highlightNextMoves(flatMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(flatMoves, capturablePieces, square);
 }
 
 function whiteKingEvents(square) {
@@ -358,9 +347,7 @@ function whiteKingEvents(square) {
     }
   });
 
-  highlightNextMoves(flatMoves);
-  captureHighlight(capturablePieces);
-  previousSelfHighlighted = square;
+  highlightPieces(flatMoves, capturablePieces, square);
 }
 
 function setGlobalListner() {
@@ -372,9 +359,17 @@ function setGlobalListner() {
       clearHighlights(GlobalState);
       const parentId = parentDiv.id;
       const square = getSquareById(parentId);
-      console.log("piece Clicked", square);
+      console.log(
+        "piece Clicked =======================================",
+        square
+      );
 
       if (previousSelfHighlighted === square) {
+        console.log(
+          "previousSelfHighlighted ********************************************",
+          previousSelfHighlighted
+        );
+
         previousSelfHighlighted = null;
         capturablePieces = [];
         return;
@@ -399,6 +394,8 @@ function setGlobalListner() {
       if (target.children.length > 1) {
         const square = getSquareById(target.id);
         moveElement(previousSelfHighlighted, square);
+      } else {
+        previousSelfHighlighted = null;
       }
       clearHighlights(GlobalState);
     }
@@ -406,6 +403,10 @@ function setGlobalListner() {
 }
 
 function checkSelected(square) {
+  // if (isKingInCheck(current_player)) {
+  //   alert(`${current_player} is in check! You must move out of check.`);
+  // }
+
   if (square.piece.piece_name.includes("BLACK_PAWN")) {
     if (current_player === "BLACK") BlackPawnEvents(square);
   } else if (square.piece.piece_name.includes("WHITE_PAWN")) {
@@ -434,7 +435,11 @@ function checkSelected(square) {
 }
 
 function moveElement(start, end) {
-  togglePlayer();
+  // if (wouldMoveResultInCheck(start, end, current_player)) {
+  //   alert("This move would put your king in check!");
+  //   return;
+  // }
+
   start.piece.current_position = end.id;
   end.piece = start.piece;
   start.piece = null;
@@ -444,10 +449,17 @@ function moveElement(start, end) {
   image.src = end.piece.img;
   image.classList.add("piece");
   destination.appendChild(image);
+  togglePlayer();
+  previousMovesRender(start, end);
+  // checkGameState();
 }
 
 function capturePiece(start, end) {
-  togglePlayer();
+  // if (wouldMoveResultInCheck(start, end, current_player)) {
+  //   alert("This move would put your king in check!");
+  //   return;
+  // }
+
   console.log("capturePiece", start, end);
   let removal = document.querySelector(`#${start.id} img`);
   removal.remove();
@@ -462,6 +474,15 @@ function capturePiece(start, end) {
   image.classList.add("piece");
   image.src = end.piece.img;
   document.getElementById(end.id).appendChild(image);
+  togglePlayer();
+  previousMovesRender(start, end);
+  // checkGameState();
 }
 
-export { setGlobalListner };
+function highlightPieces(nextMoves, capturablePieces, square) {
+  highlightNextMoves(nextMoves);
+  captureHighlight(capturablePieces);
+  previousSelfHighlighted = square;
+}
+
+export { setGlobalListner, current_player };

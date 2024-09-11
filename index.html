@@ -4,10 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CHESS</title>
+    <!-- <link rel="stylesheet" href="./styles/index.css" />
+    <link rel="stylesheet" href="./styles/general.css" /> -->
     <link rel="stylesheet" href="./styles/index.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
   </head>
   <body>
-    <div id="chess-board"></div>
+    <header>
+      <nav class="container">
+        <div class="brand">
+          <img src="chess.png" alt="ChessedMate Logo" class="logo" />
+          <h1 class="title">ChessedMate</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#" class="link">Home</a></li>
+          <li><a href="#" class="link">Play</a></li>
+          <li><a href="#" class="link">Learn</a></li>
+          <li><a href="#" class="link">Profile</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="game-area">
+        <div id="chess-board"></div>
+        <div class="game-info">
+          <div class="turn-indicator">
+            <h2 id="turn-display">
+              <span class="turn-span">White</span>'s Turn
+            </h2>
+            <button id="reset-btn" class="btn btn-primary">Reset Game</button>
+          </div>
+          <div class="move-history">
+            <h3>Move History</h3>
+            <ul id="previous-moves"></ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2027 ChessedMate. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
   <script type="module" src="index.js"></script>
 </html>
