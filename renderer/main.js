@@ -1,4 +1,5 @@
 import { GlobalState } from "../data/general.js";
+import { openModal } from "../helper/promotionModal.js";
 // import { moveElement, capturePiece } from "./movements.js";
 // import {
 //   isKingInCheck,
@@ -359,10 +360,9 @@ function setGlobalListner() {
       clearHighlights(GlobalState);
       const parentId = parentDiv.id;
       const square = getSquareById(parentId);
-      console.log(
-        "piece Clicked =======================================",
-        square
-      );
+      if (!square) {
+        throw new Error("invalid square");
+      }
 
       if (previousSelfHighlighted === square) {
         console.log(
@@ -390,6 +390,7 @@ function setGlobalListner() {
       const parentId = parentDiv.id;
       const square = getSquareById(parentId);
       moveElement(previousSelfHighlighted, square);
+      capturablePieces = [];
     } else if (target.localName === "div") {
       if (target.children.length > 1) {
         const square = getSquareById(target.id);
@@ -398,6 +399,7 @@ function setGlobalListner() {
         previousSelfHighlighted = null;
       }
       clearHighlights(GlobalState);
+      capturablePieces = [];
     }
   });
 }
@@ -406,6 +408,7 @@ function checkSelected(square) {
   // if (isKingInCheck(current_player)) {
   //   alert(`${current_player} is in check! You must move out of check.`);
   // }
+  console.log("checkSelected-----------------", square);
 
   if (square.piece.piece_name.includes("BLACK_PAWN")) {
     if (current_player === "BLACK") BlackPawnEvents(square);
@@ -434,6 +437,12 @@ function checkSelected(square) {
   }
 }
 
+function checkPromotion(square, id) {
+  console.log("checkPromotion for ", square);
+
+  return square.id[1] === id;
+}
+
 function moveElement(start, end) {
   // if (wouldMoveResultInCheck(start, end, current_player)) {
   //   alert("This move would put your king in check!");
@@ -449,9 +458,21 @@ function moveElement(start, end) {
   image.src = end.piece.img;
   image.classList.add("piece");
   destination.appendChild(image);
-  togglePlayer();
-  previousMovesRender(start, end);
+  previousMovesRender(start, end, current_player);
   // checkGameState();
+  if (current_player === "WHITE" && end.piece.piece_name === "WHITE_PAWN") {
+    if (checkPromotion(end, "8")) {
+      openModal("white", end);
+    }
+  } else if (
+    current_player === "BLACK" &&
+    end.piece.piece_name === "BLACK_PAWN"
+  ) {
+    if (checkPromotion(end, "1")) {
+      openModal("black", end);
+    }
+  }
+  togglePlayer();
 }
 
 function capturePiece(start, end) {
@@ -474,9 +495,21 @@ function capturePiece(start, end) {
   image.classList.add("piece");
   image.src = end.piece.img;
   document.getElementById(end.id).appendChild(image);
-  togglePlayer();
-  previousMovesRender(start, end);
+  previousMovesRender(start, end, current_player);
   // checkGameState();
+  if (current_player === "WHITE" && end.piece.piece_name === "WHITE_PAWN") {
+    if (checkPromotion(end, "8")) {
+      openModal("white", end);
+    }
+  } else if (
+    current_player === "BLACK" &&
+    end.piece.piece_name === "BLACK_PAWN"
+  ) {
+    if (checkPromotion(end, "1")) {
+      openModal("black", end);
+    }
+  }
+  togglePlayer();
 }
 
 function highlightPieces(nextMoves, capturablePieces, square) {

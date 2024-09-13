@@ -101,10 +101,16 @@ function captureHighlight(array) {
   });
 }
 
-function previousMovesRender(from, to) {
+function previousMovesRender(from, to, current_player) {
   const ul = document.getElementById("previous-moves");
   const list_item = document.createElement("li");
-  list_item.innerText = from.id + " --> " + to.id;
+  list_item.classList.add(current_player);
+  const id1 = document.createElement("span");
+  id1.innerText = from.id;
+  const id2 = document.createElement("span");
+  id2.innerText = to.id;
+  list_item.appendChild(id1);
+  list_item.appendChild(id2);
   ul.insertBefore(list_item, ul.firstChild);
 }
 
